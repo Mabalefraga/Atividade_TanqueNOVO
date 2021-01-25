@@ -28,45 +28,48 @@ class Tanque:
                     print("Torneira já instalada!")
                     return False
             self.torneiras_saida.append(nova_torneira)
-            print('Nova torneira adicionada com sucesso!')
+            print('Nova torneira de saida adicionada com sucesso!')
         else:
             for torneira in self.torneiras_entrada:
                 if nova_torneira.nome == torneira.nome:
                     print("Torneira já instalada!")
                     return False
             self.torneiras_entrada.append(nova_torneira)
-            print('Nova torneira instalada com sucesso!')
+            print('Nova torneira de entrada instalada com sucesso!')
         return True
 
     def abrir_torneira(self, nome_torneira, tempo_segundos):
-        for torneira in self.torneiras_saida:
-            if torneira.nome == torneira.nome:
-                if self.capacidade_atual >= torneira.vazao*tempo_segundos:
-                    self.capacidade_atual -= torneira.vazao*tempo_segundos
-                    print("Água retirada do reservatório :)")
-                    return True
-                else:
-                    self.capacidade_atual = 0
-                    print("A água acabou antes do tempo :(")
-                    return True
         for torneira in self.torneiras_entrada:
-            if torneira.nome == torneira.nome:
-                if self.capacidade_atual + torneira.vazao*tempo_segundos <= self.capacidade_max:
-                    self.capacidade_atual += torneira.vazao*tempo_segundos
-                    print("Água adicionada ao reservatório :)")
-                    return True
-                else:
-                    self.capacidade_atual = self.capacidade_max
-                    print("A água acabou transbordando, você desperdiçou água!")
-                    return True
-        return False
+            if nome_torneira == torneira.nome:
+                if torneira.nome == torneira.nome:
+                    if self.capacidade_atual + torneira.vazao*tempo_segundos <= self.capacidade_max:
+                        self.capacidade_atual += torneira.vazao*tempo_segundos
+                        print("Torneira de entrada:Água adicionada ao reservatório :)")
+                        return True
+                    else:
+                        self.capacidade_atual = self.capacidade_max
+                        print("Torneira de entrada:A água acabou transbordando, você desperdiçou água!")
+                        return True
+            else:
+                for torneira in self.torneiras_saida:
+                    if torneira.nome == torneira.nome:
+                        if self.capacidade_atual >= torneira.vazao*tempo_segundos:
+                            self.capacidade_atual -= torneira.vazao*tempo_segundos
+                            print("Torneira de saida: Água retirada do reservatório :)")
+                            return True
+                        else:
+                            self.capacidade_atual = 0
+                            print("Torneira de saida: A água acabou antes do tempo :(")
+                            return True
+                return False            
+        
 
     def imprimir_nome_torneiras(self):
         print("Torneiras:")
         for torneira in self.torneiras_entrada:
-            print(f'O nome da torneira é {torneira.nome} e sua vazão é {torneira.vazao} l/s' )
+            print(f'O nome da torneira de entrada é {torneira.nome} e sua vazão é {torneira.vazao} l/s' )
         for torneira in self.torneiras_saida:
-            print(f'O nome da torneira é {torneira.nome} e sua vazão é {torneira.vazao} l/s' )
+            print(f'O nome da torneira de saida é {torneira.nome} e sua vazão é {torneira.vazao} l/s' )
 
     def recargar_reservatorio(self, recarga):
         if self.capacidade_atual + recarga <= self.capacidade_max:
@@ -77,22 +80,24 @@ class Tanque:
             
     def remover_torneira(self, nome_torneira, entradaOUsaida=True)->bool:
         for torneira in self.torneiras_saida:
-            if nome_torneira is None:
-                print("Torneira não encontrada")
-                return False               
-            else:
-                self.torneiras_saida.remove(torneira)
-                print("Torneira removida com sucesso!")
-                return True
-                
-        for torneira in self.torneiras_entrada:
-            if nome_torneira is None:
-                print("Torneira não encontrada")
-                return False
-            else:
-                self.torneiras_entrada.remove(torneira)
-                print("Torneira removida com sucesso!")
-                return True
+            if nome_torneira == torneira.nome:
+                if nome_torneira is None:
+                    print("Torneira não encontrada")
+                    return False               
+                else:
+                    self.torneiras_saida.remove(torneira)
+                    print("Torneira removida com sucesso!")
+                    return True
+
+            else:   
+                for torneira in self.torneiras_entrada:
+                    if nome_torneira is None:
+                        print("Torneira não encontrada")
+                        return False
+                    else:
+                        self.torneiras_entrada.remove(torneira)
+                        print("Torneira removida com sucesso!")
+                        return True
 
     def calcular_tempo_esvaziamento(self, vazao):
         soma_vazao = 0
@@ -102,35 +107,17 @@ class Tanque:
             print(esvaziamento)
             return True
 
-    def atualizar_torneira(self, procurar_torneira, nova_vazao: Torneira):
-        for torneira in self.torneiras_saida:
-            if nome_torneira is None:
-                print("Torneira não encontrada")
-                return False               
-            else:
-                self.torneiras_saida.remove(torneira)
-                print("Torneira removida com sucesso!")
-                return True
-                
-        for torneira in self.torneiras_entrada:
-            if nome_torneira is None:
-                print("Torneira não encontrada")
-                return False
-            else:
-                self.torneiras_entrada.remove(torneira)
-                print("Torneira removida com sucesso!")
-                return True
-        
+    def atualizar_torneira(self, nome_torneira, vazao):
         try: 
-            for i in self.torneiras_saida:
-                if i == procurar_torneira:
-                    self.vazao = nova_vazao
-                    print("vazão atualizada com sucesso")
+            for torneira in self.torneiras_saida:
+                if torneira.nome == torneira.nome:
+                    torneira.vazao = vazao
+                    print("vazão da torneira de saida atualizada com sucesso")
                     return True
-            for i in self.torneiras_entrada:
-                if i == procurar_torneira:
-                    self.vazao = nova_vazao
-                    print("vazão atualizada com sucesso")
+            for torneira in self.torneiras_entrada:
+                if torneira.nome == torneira.nome:
+                    torneira.vazao = vazao
+                    print("vazão  da torneira de entrada atualizada com sucesso")
                     return True
         except:
             print("torneira não encontrada")
@@ -187,22 +174,26 @@ class Menu():
                 self.tanque.recargar_reservatorio(recarga)
 
             elif opcao == 5:
-                entradaOUsaida = input("A torneira que vai ser removida é de entrada ou de saida: ")
-                if entradaOUsaida == "entrada":
-                   entradaOUsaida == True
-                elif entradaOUsaida == "saida":
-                    entradaOUsaida == False
+                entradaOUsaida = input("A torneira que vai ser removida é de entrada ou de saida: (True/False) ")
+                if entradaOUsaida == "False":
+                    entradaOUsaida = False
+                elif entradaOUsaida == "True":
+                    entradaOUsaida = True
                 nome_torneira = input("Digite o nome da torneira que vai ser removida:")
                 self.tanque.remover_torneira(nome_torneira, entradaOUsaida)
 
             elif opcao == 6:
+                print("P.S: O tanque sá será esvaziado se tiver uma torneira de sai")
                 vazao = int(input("Digite a vazão que vai esvaziar o tanque:"))
                 self.tanque.calcular_tempo_esvaziamento(vazao)
 
             elif opcao == 7:
                 nome_torneira = input("Digite o nome da torneira que vai ser atualizada:")
                 vazao = int(input("Digite por qual vazao vai ser atualizada: "))
-                self.tanque.atualizar_torneira(nome_torneira, Torneira(nova_vazao))
+                self.tanque.atualizar_torneira(nome_torneira, vazao)
+            
+            elif opcao == 8:
+                exit()
 
             self.imprimir_comandos()
             opcao = int(input("Digite uma opção acima: "))
