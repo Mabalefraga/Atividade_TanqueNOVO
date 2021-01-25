@@ -13,7 +13,6 @@ class Torneira:
 class Tanque:
 
     def __init__(self, capacidade_maxima: float, capacidade: float):
-        
         self.capacidade_max = capacidade_maxima
         self.capacidade_atual = capacidade
         self.historico = []
@@ -21,7 +20,6 @@ class Tanque:
         self.torneiras_entrada = []
 
     def instalar_torneira(self, nova_torneira: Torneira, saida=True)->bool:
-        
         if saida == False:
             for torneira in self.torneiras_saida:
                 if nova_torneira.nome == torneira.nome:
@@ -88,7 +86,6 @@ class Tanque:
                     self.torneiras_saida.remove(torneira)
                     print("Torneira removida com sucesso!")
                     return True
-
             else:   
                 for torneira in self.torneiras_entrada:
                     if nome_torneira is None:
@@ -99,14 +96,16 @@ class Tanque:
                         print("Torneira removida com sucesso!")
                         return True
 
-    def calcular_tempo_esvaziamento(self, vazao):
+    def calcular_tempo_esvaziamento(self, nome_torneira):
         soma_vazao = 0
-        for i in self.torneiras_saida:
-            soma_vazao += i.vazao
-            esvaziamento = self.capacidade_atual / soma_vazao
-            print(esvaziamento)
-            return True
-
+        for torneira in self.torneiras_saida:
+            if nome_torneira == torneira.nome:
+                if torneira.vazao == torneira.vazao:
+                    soma_vazao += torneira.vazao
+                    esvaziamento = self.capacidade_atual / soma_vazao
+                    print(esvaziamento)
+                    return True
+            
     def atualizar_torneira(self, nome_torneira, vazao):
         try: 
             for torneira in self.torneiras_saida:
@@ -183,13 +182,13 @@ class Menu():
                 self.tanque.remover_torneira(nome_torneira, entradaOUsaida)
 
             elif opcao == 6:
-                print("P.S: O tanque sá será esvaziado se tiver uma torneira de sai")
-                vazao = int(input("Digite a vazão que vai esvaziar o tanque:"))
+                print("P.S: O tanque só será esvaziado se tiver uma torneira de sai")
+                vazao = input("Digite o nome da torneira que vai esvaziar o tanque:") 
                 self.tanque.calcular_tempo_esvaziamento(vazao)
 
             elif opcao == 7:
                 nome_torneira = input("Digite o nome da torneira que vai ser atualizada:")
-                vazao = int(input("Digite por qual vazao vai ser atualizada: "))
+                nome_torneira = int(input("Digite por qual vazao vai ser atualizada: "))
                 self.tanque.atualizar_torneira(nome_torneira, vazao)
             
             elif opcao == 8:
